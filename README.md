@@ -1,5 +1,43 @@
 # Laravel Booking Test
 
+Questo progetto è un'applicazione di prenotazione sviluppata con **Laravel** e contiene test automatizzati per la gestione delle prenotazioni. Puoi facilmente eseguire l'applicazione con **Docker** e avviare i test utilizzando PHPUnit.
+
+## Prerequisiti
+
+Assicurati di avere i seguenti strumenti installati sulla tua macchina:
+
+- **Docker**: per eseguire l'applicazione in un contenitore isolato.
+- **Docker Compose**: per gestire i servizi Docker e le dipendenze.
+- **Git**: per clonare il repository.
+
+## Installazione
+
+Segui questi passaggi per installare e avviare il progetto in un ambiente Docker:
+
+Clonare il repository
+```bash
+git clone https://github.com/giuseppe-cannata/laravel-booking-test.git
+
+cd laravel-booking-test
+
+docker-compose up -d
+
+docker-compose exec app bash
+
+composer install
+
+php artisan key:generate
+
+php artisan migrate
+
+php artisan db:seed
+
+php artisan test(running tests)
+
+Per un testing manuale degli endpoint importa la collection laravel-booking-test.postman_collection presente nella root
+
+# Laravel Booking Test
+
 Questo repository contiene il test tecnico per la selezione di sviluppatori PHP con esperienza in Laravel 11.
 
 ## ✅ Obiettivo

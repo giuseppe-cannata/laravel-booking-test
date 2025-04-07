@@ -22,7 +22,7 @@ class StoreBookingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'customer_id' => 'required|exists:customers,id',
+            'customer_id' => 'required',
             'booking_date' => 'required|date|after_or_equal:today',
             'notes' => 'nullable|string'
         ];

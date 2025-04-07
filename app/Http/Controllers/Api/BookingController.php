@@ -2,146 +2,150 @@
 
 namespace App\Http\Controllers\Api;
 
-use League\Csv\Writer; // Importa la libreria League\Csv per la gestione dei file CSV
-use App\Models\Booking; // Importa il modello Booking
-use Illuminate\Support\Facades\Log; // Importa il Log per registrare le informazioni di log
-use App\Http\Controllers\Controller; // Importa il controller base di Laravel
-use App\Http\Requests\StoreBookingRequest; // Importa la richiesta di validazione per la creazione di booking
-use App\Http\Requests\UpdateBookingRequest; // Importa la richiesta di validazione per l'aggiornamento di booking
+use App\Models\Customer;
+use App\Services\BookingService;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreBookingRequest;
+use App\Http\Requests\UpdateBookingRequest;
 
 class BookingController extends Controller
 {
+    protected $bookingService;
+
     /**
-     * Ottiene tutti i booking e carica la relazione 'customer'.
-     *
-     * @return \Illuminate\Http\Response
+     * Crea una nuova istanza del controller di BookingController.
+     * Il costruttore inietta il servizio di prenotazione nel controller.
+     * 
+     * @param  \App\Services\BookingService  $bookingService
+     * @return void
      */
-    public function index()
+    public function __construct(BookingService $bookingService)
     {
-        // Recupera tutti i booking e carica i dati del customer associato
-        return Booking::with('customer')->get();
+        $this->bookingService = $bookingService;
     }
 
     /**
-     * Crea un nuovo booking.
-     *
+    * Recupera tutte le prenotazioni.
+    * 
+    * @return \Illuminate\Http\JsonResponse
+     */
+    public function index()
+    {
+        // Otteniamo tutte le prenotazioni usando il metodo list() dal servizio
+        $bookings = $this->bookingService->list();
+
+        return response()->json($bookings);
+    }
+
+    /**
+     * Crea una nuova prenotazione.
+     * 
      * @param  \App\Http\Requests\StoreBookingRequest  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
+     * 
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function store(StoreBookingRequest $request)
     {
-        // Crea un nuovo booking utilizzando i dati validati dalla richiesta
-        $booking = Booking::create($request->validated());
+        // Verifica se il cliente esiste
+        $customer = Customer::find($request->input('customer_id'));
+    
+        if (!$customer) {
+            // Se il cliente non esiste, restituisci un errore 404
+            return response()->json(['error' => 'Cliente non trovato'], 404);
+        }
+        // Crea una nuova prenotazione utilizzando i dati validati
+        $booking = $this->bookingService->create($request->validated());
 
-        // Registra un log per il booking appena creato
-        Log::info('Booking created', ['booking' => $booking->id]);
+        // Registra un log per la creazione della prenotazione
+        Log::info('Prenotazione creata', ['booking' => $booking->id]);
 
-        // Restituisce una risposta JSON con il nuovo booking creato e codice 201 (Created)
+        // Restituisce la prenotazione creata con un codice di stato 201 (creato)
         return response()->json($booking, 201);
     }
 
     /**
-     * Mostra un booking specifico in base al suo ID.
-     *
+     * Recupera i dettagli di una prenotazione specifica.
+     * 
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
-        // Trova il booking con l'ID specificato
-        $booking = Booking::find($id);
+        // Recupera la prenotazione tramite il servizio
+        $booking = $this->bookingService->show($id);
 
-        // Se il booking non esiste, restituisce un errore 404
+        // Se la prenotazione non esiste, restituisce un errore 404
         if (!$booking) {
-            return response()->json(['error' => 'Booking not found'], 404);
+            return response()->json(['message' => 'Prenotazione non trovata'], 404);
         }
 
-        // Restituisce il booking con la relazione 'customer' caricata
-        return $booking->load('customer');
-    }
-
-    /**
-     * Aggiorna un booking esistente.
-     *
-     * @param  \App\Http\Requests\UpdateBookingRequest  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdateBookingRequest $request, $id)
-    {
-        // Cerca il booking da aggiornare utilizzando l'ID
-        $booking = Booking::find($id);
-
-        // Se il booking non esiste, restituisce un errore 404
-        if (!$booking) {
-            return response()->json(['message' => 'Booking non trovato.'], 404);
-        }
-
-        // Aggiorna il booking con i dati validati dalla richiesta
-        $booking->update($request->validated());
-
-        // Registra un log per l'aggiornamento del booking
-        Log::info('Booking aggiornato', ['booking' => $booking->id]);
-
-        // Restituisce una risposta JSON con i dati aggiornati del booking
+        // Restituisce i dettagli della prenotazione
         return response()->json($booking);
     }
 
     /**
-     * Elimina un booking esistente.
-     *
+     * Aggiorna una prenotazione esistente.
+     * 
+     * @param  \App\Http\Requests\UpdateBookingRequest  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
+     * 
+     * @throws \Illuminate\Validation\ValidationException
      */
-    public function destroy($id)
+    public function update(UpdateBookingRequest $request, $id)
     {
-        // Trova il booking da eliminare utilizzando l'ID
-        $booking = Booking::find($id);
+        // Aggiorna la prenotazione con i dati validati
+        $booking = $this->bookingService->update($id, $request->validated());
 
-        // Se il booking non esiste, restituisce un errore 404
+        // Se la prenotazione non esiste, restituisce un errore 404
         if (!$booking) {
-            return response()->json(['message' => 'Booking non trovato.'], 404);
+            return response()->json(['message' => 'Prenotazione non trovata'], 404);
         }
 
-        // Elimina il booking dal database
-        $booking->delete();
+        // Registra un log per l'aggiornamento della prenotazione
+        Log::info('Prenotazione aggiornata', ['booking' => $booking->id]);
 
-        // Registra un log per la cancellazione del booking
-        Log::warning('Booking deleted', ['booking' => $booking->id]);
-
-        // Restituisce una risposta JSON con un messaggio di successo
-        return response()->json(['message' => 'Booking eliminato con successo.']);
+        // Restituisce i dettagli della prenotazione aggiornata
+        return response()->json($booking);
     }
 
     /**
-     * Esporta tutti i booking in un file CSV.
-     *
+     * Elimina una prenotazione esistente.
+     * 
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function destroy($id)
+    {
+        // Elimina la prenotazione tramite il servizio
+        $success = $this->bookingService->delete($id);
+
+        // Se la prenotazione non esiste, restituisce un errore 404
+        if (!$success) {
+            return response()->json(['message' => 'Prenotazione non trovata'], 404);
+        }
+
+        // Registra un log per la cancellazione della prenotazione
+        Log::warning('Prenotazione cancellata', ['booking_id' => $id]);
+
+        // Restituisce una risposta di successo
+        return response()->json(['message' => 'Prenotazione eliminata con successo']);
+    }
+
+    /**
+     * Esporta tutte le prenotazioni in un file CSV.
+     * 
      * @return \Illuminate\Http\Response
      */
     public function export()
     {
-        // Recupera tutti i booking con la relazione 'customer' caricata
-        $bookings = Booking::with('customer')->get();
+        // Esporta le prenotazioni in formato CSV
+        $csv = $this->bookingService->export();
 
-        // Crea un nuovo oggetto CSV
-        $csv = Writer::createFromString('');
-        
-        // Aggiunge l'intestazione al CSV
-        $csv->insertOne(['ID', 'Customer Name', 'Email', 'Booking Date', 'Notes']);
-
-        // Aggiunge ogni booking come una nuova riga nel CSV
-        foreach ($bookings as $booking) {
-            $csv->insertOne([
-                $booking->id,
-                $booking->customer->name,
-                $booking->customer->email,
-                $booking->booking_date,
-                $booking->notes,
-            ]);
-        }
-
-        // Restituisce il CSV come risposta, con il tipo di contenuto 'text/csv' e l'intestazione per il download del file
-        return response($csv->toString(), 200, [
+        // Restituisce il CSV come risposta con intestazioni per il download
+        return response($csv, 200, [
             'Content-Type' => 'text/csv',
             'Content-Disposition' => 'attachment; filename="bookings.csv"',
         ]);
