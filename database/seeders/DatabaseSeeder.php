@@ -17,8 +17,7 @@ class DatabaseSeeder extends Seeder
         // Chiamato il seeder per creare utenti di test
         $this->call([
             TestUserSeeder::class,
-            BookingSeeder::class,
-            CustomerSeeder::class,
+            BookingSeeder::class
         ]);
     }
 }
