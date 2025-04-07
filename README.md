@@ -14,7 +14,6 @@ Assicurati di avere i seguenti strumenti installati sulla tua macchina:
 
 Segui questi passaggi per installare e avviare il progetto in un ambiente Docker:
 
-Clonare il repository
 ```bash
 git clone https://github.com/giuseppe-cannata/laravel-booking-test.git
 
