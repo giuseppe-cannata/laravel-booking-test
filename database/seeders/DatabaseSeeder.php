@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             TestUserSeeder::class,
             BookingSeeder::class,
-            CustomOrderSeeder::class,
+            CustomerSeeder::class,
         ]);
     }
 }

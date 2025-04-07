@@ -19,7 +19,11 @@ git clone git@github.com:giuseppe-cannata/laravel-booking-test.git
 
 cd laravel-booking-test
 
-docker-compose up -d
+git checkout feature/giuseppe-cannata
+
+docker-compose ps
+
+sudo docker-compose up -d
 
 docker-compose exec app bash
 
