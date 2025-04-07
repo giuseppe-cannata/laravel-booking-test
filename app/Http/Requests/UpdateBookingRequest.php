@@ -24,7 +24,7 @@ class UpdateBookingRequest extends FormRequest
         return [
             'customer_id' => 'required|exists:customers,id',
             'booking_date' => 'required|date|after_or_equal:today',
-            'notes' => 'nullable|string'
+            'notes' => 'nullable|string',
         ];
     }
 }

@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
 
 class TestUserSeeder extends Seeder
 {
@@ -15,18 +15,18 @@ class TestUserSeeder extends Seeder
 
         if (User::where('email', $email)->exists()) {
             $this->command->warn("L'utente con email $email esiste già.");
+
             return;
         }
 
         User::create([
             'name' => 'Utente Test',
             'email' => $email,
-            'password' => Hash::make($password)
+            'password' => Hash::make($password),
         ]);
 
-        $this->command->info("Utente di test creato:");
+        $this->command->info('Utente di test creato:');
         $this->command->info("Email: $email");
-        $this->command->info("Password: password");
+        $this->command->info('Password: password');
     }
 }
-

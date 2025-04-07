@@ -1,7 +1,8 @@
 <?php
+
 use App\Http\Controllers\Api\BookingController;
-use Illuminate\Http\Request;
 use App\Http\Controllers\AuthController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('bookings/export', [BookingController::class, 'export']);
@@ -19,4 +20,3 @@ Route::middleware('auth:sanctum')->post('logout', [AuthController::class, 'logou
 Route::middleware('auth:sanctum')->get('/me', function (Request $request) {
     return $request->user();
 });
-

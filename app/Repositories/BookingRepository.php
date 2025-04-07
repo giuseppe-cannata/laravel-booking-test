@@ -32,6 +32,7 @@ class BookingRepository
         if ($booking) {
             $booking->update($data);
         }
+
         return $booking;
     }
 
@@ -41,6 +42,7 @@ class BookingRepository
         if ($booking) {
             $booking->delete();
         }
+
         return $booking;
     }
 }

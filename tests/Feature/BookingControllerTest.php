@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use App\Models\User;
 use App\Models\Booking;
 use App\Models\Customer;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class BookingControllerTest extends TestCase
 {
@@ -16,6 +16,7 @@ class BookingControllerTest extends TestCase
     {
         $user = User::factory()->create();
         $this->actingAs($user, 'sanctum'); // o semplicemente ->actingAs($user) se non usi Sanctum
+
         return $user;
     }
 

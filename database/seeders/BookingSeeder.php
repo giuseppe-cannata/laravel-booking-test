@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Booking;
 use Illuminate\Support\Facades\DB;
 
 class BookingSeeder extends Seeder

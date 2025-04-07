@@ -24,7 +24,7 @@ class StoreBookingRequest extends FormRequest
         return [
             'customer_id' => 'required',
             'booking_date' => 'required|date|after_or_equal:today',
-            'notes' => 'nullable|string'
+            'notes' => 'nullable|string',
         ];
     }
 }

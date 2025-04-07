@@ -37,6 +37,10 @@ php artisan db:seed
 
 php artisan test(running tests)
 
+composer lint:test 
+
+composer phpstan -- --memory-limit=512M
+
 Per un testing manuale degli endpoint importa la collection laravel-booking-test.postman_collection presente nella root
 
 # Laravel Booking Test

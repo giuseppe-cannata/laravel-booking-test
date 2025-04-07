@@ -6,7 +6,7 @@ use App\Repositories\BookingRepository;
 
 class ListBookingAction
 {
-	protected $bookingRepository;
+    protected $bookingRepository;
 
     public function __construct(BookingRepository $bookingRepository)
     {

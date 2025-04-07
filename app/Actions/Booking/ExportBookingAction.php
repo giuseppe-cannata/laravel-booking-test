@@ -26,7 +26,7 @@ class ExportBookingAction
 
         // Crea un nuovo oggetto CSV
         $csv = Writer::createFromString('');
-        
+
         // Aggiunge l'intestazione al CSV
         $csv->insertOne(['ID', 'Customer Name', 'Email', 'Booking Date', 'Notes']);
 

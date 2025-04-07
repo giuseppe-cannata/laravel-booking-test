@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Customer;
-use App\Services\BookingService;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreBookingRequest;
 use App\Http\Requests\UpdateBookingRequest;
+use App\Models\Customer;
+use App\Services\BookingService;
+use Illuminate\Support\Facades\Log;
 
 class BookingController extends Controller
 {
@@ -16,8 +16,7 @@ class BookingController extends Controller
     /**
      * Crea una nuova istanza del controller di BookingController.
      * Il costruttore inietta il servizio di prenotazione nel controller.
-     * 
-     * @param  \App\Services\BookingService  $bookingService
+     *
      * @return void
      */
     public function __construct(BookingService $bookingService)
@@ -26,9 +25,9 @@ class BookingController extends Controller
     }
 
     /**
-    * Recupera tutte le prenotazioni.
-    * 
-    * @return \Illuminate\Http\JsonResponse
+     * Recupera tutte le prenotazioni.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -40,18 +39,17 @@ class BookingController extends Controller
 
     /**
      * Crea una nuova prenotazione.
-     * 
-     * @param  \App\Http\Requests\StoreBookingRequest  $request
+     *
      * @return \Illuminate\Http\JsonResponse
-     * 
+     *
      * @throws \Illuminate\Validation\ValidationException
      */
     public function store(StoreBookingRequest $request)
     {
         // Verifica se il cliente esiste
         $customer = Customer::find($request->input('customer_id'));
-    
-        if (!$customer) {
+
+        if (! $customer) {
             // Se il cliente non esiste, restituisci un errore 404
             return response()->json(['error' => 'Cliente non trovato'], 404);
         }
@@ -67,7 +65,7 @@ class BookingController extends Controller
 
     /**
      * Recupera i dettagli di una prenotazione specifica.
-     * 
+     *
      * @param  int  $id
      * @return \Illuminate\Http\JsonResponse
      */
@@ -77,7 +75,7 @@ class BookingController extends Controller
         $booking = $this->bookingService->show($id);
 
         // Se la prenotazione non esiste, restituisce un errore 404
-        if (!$booking) {
+        if (! $booking) {
             return response()->json(['message' => 'Prenotazione non trovata'], 404);
         }
 
@@ -87,11 +85,10 @@ class BookingController extends Controller
 
     /**
      * Aggiorna una prenotazione esistente.
-     * 
-     * @param  \App\Http\Requests\UpdateBookingRequest  $request
+     *
      * @param  int  $id
      * @return \Illuminate\Http\JsonResponse
-     * 
+     *
      * @throws \Illuminate\Validation\ValidationException
      */
     public function update(UpdateBookingRequest $request, $id)
@@ -100,7 +97,7 @@ class BookingController extends Controller
         $booking = $this->bookingService->update($id, $request->validated());
 
         // Se la prenotazione non esiste, restituisce un errore 404
-        if (!$booking) {
+        if (! $booking) {
             return response()->json(['message' => 'Prenotazione non trovata'], 404);
         }
 
@@ -113,7 +110,7 @@ class BookingController extends Controller
 
     /**
      * Elimina una prenotazione esistente.
-     * 
+     *
      * @param  int  $id
      * @return \Illuminate\Http\JsonResponse
      */
@@ -123,7 +120,7 @@ class BookingController extends Controller
         $success = $this->bookingService->delete($id);
 
         // Se la prenotazione non esiste, restituisce un errore 404
-        if (!$success) {
+        if (! $success) {
             return response()->json(['message' => 'Prenotazione non trovata'], 404);
         }
 
@@ -136,7 +133,7 @@ class BookingController extends Controller
 
     /**
      * Esporta tutte le prenotazioni in un file CSV.
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function export()
